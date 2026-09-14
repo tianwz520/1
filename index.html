@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🎂 生日快乐 · 互动庆典</title>
+  <!-- 字体与图标 -->
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Quicksand', sans-serif;
+      background: linear-gradient(145deg, #2b1b3a 0%, #1e2b3c 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* 飘动的彩色纸屑（背景装饰） */
+    .confetti-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    .confetti-bg i {
+      position: absolute;
+      display: block;
+      color: rgba(255, 215, 0, 0.3);
+      font-size: 24px;
+      animation: floatConfetti 12s linear infinite;
+    }
+
+    @keyframes floatConfetti {
+      0% { transform: translateY(100vh) rotate(0deg); opacity: 0.2; }
+      100% { transform: translateY(-20vh) rotate(360deg); opacity: 0.8; }
+    }
+
+    /* 主卡片容器 */
+    .party-container {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      max-width: 900px;
+      background: rgba(255, 245, 235, 0.1);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: 48px;
+      padding: 24px;
+      box-shadow: 0 30px 50px rgba(0, 0, 0, 0.5), 0 0 0 2px rgba(255, 215, 0, 0.2) inset;
+      border: 1px solid rgba(255, 220, 150, 0.4);
+      transition: all 0.3s;
+    }
+
+    /* 内部白色/奶油色面板 */
+    .celebration-card {
+      background: #fff9f0;
+      border-radius: 36px;
+      padding: 32px 28px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), 0 0 0 4px #fff3e0 inset;
+      transition: all 0.3s;
+    }
+
+    /* 标题区域 */
+    .header {
+      text-align: center;
+      margin-bottom: 24px;
+      position: relative;
+    }
+
+    .header h1 {
+      font-size: 3.2rem;
+      font-weight: 700;
+      color: #4a2e3b;
+      text-shadow: 3px 3px 0 #ffd966, 6px 6px 0 rgba(255, 200, 100, 0.4);
+      letter-spacing: 2px;
+      display: inline-block;
+      background: linear-gradient(135deg, #b34180, #e68a2e);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.2));
+      transition: transform 0.2s;
+    }
+
+    .header h1 i {
+      background: none;
+      -webkit-text-fill-color: #f7b731;
+      margin: 0 8px;
+    }
+
+    .header p {
+      font-size: 1.3rem;
+      color: #6b4f4f;
+      margin-top: 8px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .header p i {
+      color: #e68a2e;
+    }
+
+    /* 页面切换区域 —— 两个页面（主页 & 许愿墙）*/
+    .pages-wrapper {
+      position: relative;
+      min-height: 380px;
+    }
+
+    .page {
+      transition: opacity 0.4s ease, transform 0.4s ease;
+      display: none;
+      opacity: 0;
+      transform: translateY(12px);
+    }
+
+    .page.active {
+      display: block;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* 主页——生日蛋糕+祝福 */
+    .birthday-hero {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .cake-container {
+      position: relative;
+      width: 200px;
+      height: 170px;
+      margin: 10px auto;
+      filter: drop-shadow(0 12px 10px rgba(0, 0, 0, 0.2));
+    }
+
+    .cake {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 150px;
+      height: 100px;
+      background: #f7d9aa;
+      border-radius: 0 0 20px 20px;
+      box-shadow: 0 10px 0 #b47b4c, 0 20px 10px rgba(0, 0, 0, 0.15);
+      z-index: 2;
+    }
+
+    .cake::before {
+      content: '';
+      position: absolute;
+      top: -18px;
+      left: 0;
+      width: 100%;
+      height: 25px;
+      background: #f4b5b5;
+      border-radius: 20px 20px 0 0;
+      box-shadow: 0 -5px 0 #d48c8c;
+    }
+
+    .icing {
+      position: absolute;
+      top: 8px;
+      left: 10px;
+      width: 130px;
+      height: 16px;
+      background: #f7eac6;
+      border-radius: 20px;
+      box-shadow: 0 0 0 2px #fff6e0;
+      z-index: 3;
+    }
+
+    .candle {
+      position: absolute;
+      top: -35px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 14px;
+      height: 45px;
+      background: repeating-linear-gradient(45deg, #fff, #fff 6px, #ffb3b3 6px, #ffb3b3 12px);
+      border-radius: 6px;
+      box-shadow: 0 0 0 2px #f5cba0, 0 0 12px #ffd966;
+      z-index: 4;
+    }
+
+    .flame {
+      position: absolute;
+      top: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 16px;
+      height: 22px;
+      background: radial-gradient(circle, #ffd966, #ff8c42);
+      border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+      box-shadow: 0 0 20px #ffb347;
+      animation: flicker 0.2s infinite alternate;
+      z-index: 5;
+    }
+
+    @keyframes flicker {
+      0% { transform: translateX(-50%) scale(1); opacity: 1; }
+      100% { transform: translateX(-50%) scale(1.15); opacity: 0.9; box-shadow: 0 0 30px #ffaa33; }
+    }
+
+    .sprinkles {
+      position: absolute;
+      top: -10px;
+      left: 0;
+      width: 100%;
+      height: 30px;
+      z-index: 6;
+    }
+
+    .sprinkles span {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      background: #f55b8c;
+      border-radius: 2px;
+      transform: rotate(45deg);
+    }
+
+    .sprinkles span:nth-child(1) { left: 20px; top: 5px; background: #f5b342; }
+    .sprinkles span:nth-child(2) { left: 50px; top: 18px; background: #5bc0be; }
+    .sprinkles span:nth-child(3) { left: 90px; top: 2px; background: #e68a2e; }
+    .sprinkles span:nth-child(4) { left: 120px; top: 15px; background: #b34180; }
+    .sprinkles span:nth-child(5) { left: 140px; top: 8px; background: #6a4c93; }
+
+    .greeting-text {
+      text-align: center;
+      background: #fef5e8;
+      padding: 18px 22px;
+      border-radius: 60px;
+      box-shadow: 0 6px 0 #d9b382, 0 12px 18px rgba(0, 0, 0, 0.1);
+      border: 2px solid #ffe6b0;
+    }
+
+    .greeting-text h2 {
+      font-size: 1.9rem;
+      color: #753e4b;
+      margin-bottom: 6px;
+      font-weight: 700;
+    }
+
+    .greeting-text p {
+      font-size: 1.2rem;
+      color: #926b6b;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .interactive-wish-btn {
+      background: #e68a2e;
+      border: none;
+      color: white;
+      font-weight: 700;
+      font-size: 1.3rem;
+      padding: 12px 32px;
+      border-radius: 60px;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 8px 0 #a55d1a, 0 12px 20px rgba(0, 0, 0, 0.2);
+      cursor: pointer;
+      transition: all 0.1s ease;
+      margin-top: 8px;
+      border: 2px solid #ffcf8a;
+    }
+
+    .interactive-wish-btn:active {
+      transform: translateY(5px);
+      box-shadow: 0 3px 0 #a55d1a, 0 8px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .interactive-wish-btn i {
+      font-size: 1.4rem;
+    }
+
+    /* 许愿墙页面 */
+    .wish-page {
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+
+    .wish-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .wish-header h3 {
+      font-size: 2rem;
+      color: #693b4b;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+    }
+
+    .back-btn {
+      background: #fff2dd;
+      border: none;
+      font-weight: 700;
+      font-size: 1.1rem;
+      padding: 8px 22px;
+      border-radius: 40px;
+      color: #8b5a2b;
+      box-shadow: 0 5px 0 #c2a17b, 0 6px 12px rgba(0, 0, 0, 0.1);
+      cursor: pointer;
+      transition: all 0.1s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border: 2px solid #ffe0b5;
+    }
+
+    .back-btn:active {
+      transform: translateY(4px);
+      box-shadow: 0 1px 0 #c2a17b, 0 6px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .wish-input-area {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .wish-input-area input {
+      flex: 1;
+      min-width: 180px;
+      padding: 16px 20px;
+      border: 3px solid #ffdbb5;
+      border-radius: 60px;
+      font-size: 1rem;
+      font-family: 'Quicksand', sans-serif;
+      font-weight: 600;
+      background: #fffcf5;
+      outline: none;
+      transition: 0.2s;
+      box-shadow: 0 6px 0 #e6c8a6, 0 6px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .wish-input-area input:focus {
+      border-color: #e68a2e;
+      box-shadow: 0 6px 0 #b47b4c, 0 8px 16px rgba(0, 0, 0, 0.1);
+    }
+
+    .wish-input-area button {
+      background: #b34180;
+      border: none;
+      color: white;
+      font-weight: 700;
+      font-size: 1.2rem;
+      padding: 0 32px;
+      border-radius: 60px;
+      cursor: pointer;
+      box-shadow: 0 8px 0 #6e2a52, 0 8px 16px rgba(0, 0, 0, 0.2);
+      transition: all 0.1s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border: 2px solid #f7b0d9;
+      white-space: nowrap;
+    }
+
+    .wish-input-area button:active {
+      transform: translateY(5px);
+      box-shadow: 0 3px 0 #6e2a52, 0 8px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    .wish-list {
+      background: #f7ede1;
+      border-radius: 30px;
+      padding: 20px;
+      min-height: 180px;
+      max-height: 260px;
+      overflow-y: auto;
+      box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.05), 0 6px 0 #c9b29b;
+      border: 2px solid #fff1e0;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .wish-item {
+      background: white;
+      border-radius: 30px;
+      padding: 14px 22px;
+      font-weight: 600;
+      color: #4a2e3b;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 4px 0 #d9c2ab, 0 4px 12px rgba(0, 0, 0, 0.05);
+      animation: wishAppear 0.3s ease;
+      border: 1px solid #ffe2b3;
+      word-break: break-word;
+    }
+
+    .wish-item i {
+      color: #e68a2e;
+      font-size: 1.3rem;
+      flex-shrink: 0;
+    }
+
+    @keyframes wishAppear {
+      0% { opacity: 0; transform: scale(0.9) translateY(10px); }
+      100% { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .empty-wish {
+      text-align: center;
+      color: #b99a8a;
+      font-weight: 600;
+      font-size: 1.1rem;
+      padding: 30px 10px;
+    }
+
+    /* 底部互动按钮（额外小功能） */
+    .extra-fun {
+      display: flex;
+      justify-content: center;
+      gap: 18px;
+      margin-top: 26px;
+      flex-wrap: wrap;
+    }
+
+    .fun-btn {
+      background: #fff2dd;
+      border: none;
+      font-size: 1.4rem;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      color: #8b5a2b;
+      cursor: pointer;
+      box-shadow: 0 6px 0 #c2a17b, 0 8px 16px rgba(0, 0, 0, 0.15);
+      transition: all 0.1s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid #ffe0b5;
+    }
+
+    .fun-btn:active {
+      transform: translateY(4px);
+      box-shadow: 0 2px 0 #c2a17b, 0 8px 16px rgba(0, 0, 0, 0.1);
+    }
+
+    .fun-btn i {
+      font-size: 1.8rem;
+    }
+
+    /* 响应式 */
+    @media (max-width: 600px) {
+      .celebration-card { padding: 20px 16px; }
+      .header h1 { font-size: 2.3rem; }
+      .header p { font-size: 1rem; }
+      .cake-container { width: 150px; height: 140px; }
+      .cake { width: 120px; height: 80px; }
+      .icing { width: 100px; }
+      .greeting-text h2 { font-size: 1.5rem; }
+      .wish-header h3 { font-size: 1.6rem; }
+      .wish-input-area button { padding: 0 20px; font-size: 1rem; }
+      .wish-item { font-size: 0.95rem; }
+      .fun-btn { width: 50px; height: 50px; font-size: 1.2rem; }
+    }
+  </style>
+</head>
+<body>
+  <!-- 背景装饰小彩纸 -->
+  <div class="confetti-bg">
+    <i class="fas fa-star" style="left: 5%; animation-duration: 14s; animation-delay: 0s;"></i>
+    <i class="fas fa-birthday-cake" style="left: 18%; animation-duration: 18s; animation-delay: 2s;"></i>
+    <i class="fas fa-gift" style="left: 33%; animation-duration: 12s; animation-delay: 1s;"></i>
+    <i class="fas fa-heart" style="left: 52%; animation-duration: 16s; animation-delay: 4s;"></i>
+    <i class="fas fa-star" style="left: 68%; animation-duration: 20s; animation-delay: 0.5s;"></i>
+    <i class="fas fa-cake-candles" style="left: 82%; animation-duration: 15s; animation-delay: 3s;"></i>
+    <i class="fas fa-gift" style="left: 94%; animation-duration: 13s; animation-delay: 5s;"></i>
+  </div>
+
+  <div class="party-container">
+    <div class="celebration-card">
+      <div class="header">
+        <h1>
+          <i class="fas fa-birthday-cake"></i> 生日快乐 <i class="fas fa-birthday-cake"></i>
+        </h1>
+        <p>
+          <i class="fas fa-star"></i> 今天是属于你的日子 <i class="fas fa-star"></i>
+        </p>
+      </div>
+
+      <!-- 页面容器 -->
+      <div class="pages-wrapper">
+        <!-- 主页：蛋糕与祝福 -->
+        <div id="page-home" class="page active">
+          <div class="birthday-hero">
+            <div class="cake-container">
+              <div class="cake">
+                <div class="icing"></div>
+                <div class="candle">
+                  <div class="flame"></div>
+                </div>
+                <div class="sprinkles">
+                  <span></span><span></span><span></span><span></span><span></span>
+                </div>
+              </div>
+            </div>
+            <div class="greeting-text">
+              <h2>🎉 祝你生日快乐！ 🎉</h2>
+              <p>愿你的每一天都像蛋糕一样甜蜜～</p>
+              <button class="interactive-wish-btn" id="goToWishBtn">
+                <i class="fas fa-pen-fancy"></i> 写下你的祝福
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 许愿墙页面 -->
+        <div id="page-wish" class="page">
+          <div class="wish-page">
+            <div class="wish-header">
+              <h3><i class="fas fa-heart" style="color: #b34180;"></i> 许愿墙</h3>
+              <button class="back-btn" id="backToHomeBtn">
+                <i class="fas fa-arrow-left"></i> 返回
+              </button>
+            </div>
+            <div class="wish-input-area">
+              <input type="text" id="wishInput" placeholder="写下你的生日祝福..." maxlength="60">
+              <button id="addWishBtn"><i class="fas fa-plus-circle"></i> 添加</button>
+            </div>
+            <div class="wish-list" id="wishListContainer">
+              <!-- 默认带有几条祝福，动态添加 -->
+              <div class="wish-item"><i class="fas fa-star"></i> 生日快乐！愿你永远闪耀 ✨</div>
+              <div class="wish-item"><i class="fas fa-heart"></i> 天天开心，幸福满满！</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 底部趣味按钮（互动小功能） -->
+      <div class="extra-fun">
+        <button class="fun-btn" id="confettiBtn" title="撒彩带庆祝"><i class="fas fa-bahai"></i></button>
+        <button class="fun-btn" id="musicNoteBtn" title="播放生日歌 (模拟)"><i class="fas fa-music"></i></button>
+        <button class="fun-btn" id="magicWandBtn" title="变出更多祝福"><i class="fas fa-wand-magic-sparkles"></i></button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      // 获取页面元素
+      const homePage = document.getElementById('page-home');
+      const wishPage = document.getElementById('page-wish');
+      const goToWishBtn = document.getElementById('goToWishBtn');
+      const backToHomeBtn = document.getElementById('backToHomeBtn');
+      const wishInput = document.getElementById('wishInput');
+      const addWishBtn = document.getElementById('addWishBtn');
+      const wishListContainer = document.getElementById('wishListContainer');
+
+      // 切换页面函数
+      function showPage(pageToShow) {
+        if (pageToShow === 'home') {
+          homePage.classList.add('active');
+          wishPage.classList.remove('active');
+        } else {
+          wishPage.classList.add('active');
+          homePage.classList.remove('active');
+        }
+      }
+
+      // 跳转到许愿墙
+      goToWishBtn.addEventListener('click', () => showPage('wish'));
+      // 返回主页
+      backToHomeBtn.addEventListener('click', () => showPage('home'));
+
+      // 添加新祝福
+      function addWish(text) {
+        const trimmed = text.trim();
+        if (trimmed === '') {
+          alert('请写一点祝福再添加哦～');
+          return;
+        }
+        const wishItem = document.createElement('div');
+        wishItem.className = 'wish-item';
+        // 随机图标
+        const icons = ['fa-star', 'fa-heart', 'fa-cake-candles', 'fa-gift', 'fa-champagne-glasses'];
+        const randomIcon = icons[Math.floor(Math.random() * icons.length)];
+        wishItem.innerHTML = `<i class="fas ${randomIcon}"></i> ${trimmed}`;
+        wishListContainer.appendChild(wishItem);
+        // 清空输入框
+        wishInput.value = '';
+        // 滚动到底部
+        wishListContainer.scrollTop = wishListContainer.scrollHeight;
+      }
+
+      addWishBtn.addEventListener('click', () => addWish(wishInput.value));
+      wishInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          addWish(wishInput.value);
+        }
+      });
+
+      // 额外互动按钮功能
+      // 1. 撒彩带（生成飘落的彩带元素，短暂显示）
+      const confettiBtn = document.getElementById('confettiBtn');
+      confettiBtn.addEventListener('click', () => {
+        for (let i = 0; i < 18; i++) {
+          const confetti = document.createElement('i');
+          confetti.className = 'fas fa-star';
+          confetti.style.position = 'fixed';
+          confetti.style.left = Math.random() * 100 + '%';
+          confetti.style.top = '-10%';
+          confetti.style.fontSize = (Math.random() * 20 + 12) + 'px';
+          confetti.style.color = `hsl(${Math.random() * 360}, 90%, 70%)`;
+          confetti.style.zIndex = '9999';
+          confetti.style.pointerEvents = 'none';
+          confetti.style.animation = `floatConfetti ${Math.random() * 3 + 2}s linear forwards`;
+          confetti.style.animationDelay = Math.random() * 0.5 + 's';
+          document.body.appendChild(confetti);
+          setTimeout(() => confetti.remove(), 4000);
+        }
+        // 简单反馈
+        confettiBtn.style.transform = 'scale(0.9)';
+        setTimeout(() => confettiBtn.style.transform = '', 150);
+      });
+
+      // 2. 音乐按钮 —— 模拟播放歌曲（弹窗或提示，并飘出音符）
+      const musicBtn = document.getElementById('musicNoteBtn');
+      musicBtn.addEventListener('click', () => {
+        // 生成漂浮音符
+        for (let i = 0; i < 6; i++) {
+          const note = document.createElement('i');
+          note.className = 'fas fa-music';
+          note.style.position = 'fixed';
+          note.style.left = (30 + Math.random() * 40) + '%';
+          note.style.bottom = '30%';
+          note.style.fontSize = (Math.random() * 30 + 20) + 'px';
+          note.style.color = '#ffb347';
+          note.style.zIndex = '10000';
+          note.style.pointerEvents = 'none';
+          note.style.opacity = '0.9';
+          note.style.animation = `floatUp 1.2s ease-out forwards`;
+          document.body.appendChild(note);
+          setTimeout(() => note.remove(), 1300);
+        }
+
+        // 添加临时关键帧（如果还没有）
+        if (!document.querySelector('#floatUpKeyframes')) {
+          const style = document.createElement('style');
+          style.id = 'floatUpKeyframes';
+          style.innerHTML = `
+            @keyframes floatUp {
+              0% { transform: translateY(0) rotate(0deg); opacity: 0.9; }
+              100% { transform: translateY(-180px) rotate(20deg); opacity: 0; }
+            }
+          `;
+          document.head.appendChild(style);
+        }
+
+        // 简单提示（不是真正的音乐，但是有趣的反馈）
+        musicBtn.style.transform = 'scale(0.9)';
+        setTimeout(() => musicBtn.style.transform = '', 150);
+      });
+
+      // 3. 魔法棒 —— 随机添加一条祝福到许愿墙
+      const magicWandBtn = document.getElementById('magicWandBtn');
+      const magicWishes = [
+        '🎂 愿你永远快乐，像星星一样闪亮！',
+        '✨ 心想事成，好运连连！',
+        '💖 今天你是最闪亮的主角！',
+        '🎁 希望所有美好都如期而至～',
+        '🌈 愿你被世界温柔以待！',
+        '🍰 甜甜的蛋糕，甜甜的你！',
+        '🌟 新的一岁，继续发光！'
+      ];
+      magicWandBtn.addEventListener('click', () => {
+        // 随机选一条
+        const randomWish = magicWishes[Math.floor(Math.random() * magicWishes.length)];
+        addWish(randomWish);
+        // 如果当前不在许愿墙页面，自动跳转过去让用户看到
+        if (!wishPage.classList.contains('active')) {
+          showPage('wish');
+        }
+        // 简单动画
+        magicWandBtn.style.transform = 'scale(0.9) rotate(15deg)';
+        setTimeout(() => magicWandBtn.style.transform = '', 200);
+      });
+
+      // 额外细节：从主页添加祝福后，如果切回主页再进入许愿墙，不会丢失。
+      // 初始化时滚动到许愿墙底部？不用。但调整一下默认高度即可
+
+      // 确保输入框自动聚焦（切换到许愿墙时）
+      const originalShowPage = showPage;
+      window.showPage = function(page) {
+        originalShowPage(page);
+        if (page === 'wish') {
+          setTimeout(() => wishInput.focus(), 100);
+        }
+      };
+      // 重新绑定，使用新的showPage
+      goToWishBtn.onclick = () => window.showPage('wish');
+      backToHomeBtn.onclick = () => window.showPage('home');
+      // 更新引用的函数 (覆盖之前的listener)
+      // 删除之前的监听再添加? 简单一点直接覆盖onclick, 但之前addEventListener会保留，为了干净，用新方式
+      // 移除原来监听重新绑定
+      // 这里使用移除监听的方式保持整洁
+      // 但是已经有addEventListener了，再绑定onclick会触发两次。所以移除原来的监听方式：
+      // 我们干脆重构一下，把所有监听重新绑定。
+      // 简单方式：重置所有监听（利用removeEventListener需要命名函数）。为了代码可读，采用以下:
+      // 直接替换onclick属性，同时阻止之前addEventListener的重复触发。
+      // 但之前是通过addEventListener绑定的，无法轻易移除。所以重构一下showPage的绑定:
+      // 实际上可以移除addEventListener用函数引用，但是为了省事，我们重新获取按钮并替换
+      const newGoToWishBtn = goToWishBtn.cloneNode(true);
+      goToWishBtn.parentNode.replaceChild(newGoToWishBtn, goToWishBtn);
+      const newBackBtn = backToHomeBtn.cloneNode(true);
+      backToHomeBtn.parentNode.replaceChild(newBackBtn, backToHomeBtn);
+      
+      // 重新获取元素
+      const finalGoBtn = document.getElementById('goToWishBtn');
+      const finalBackBtn = document.getElementById('backToHomeBtn');
+      
+      finalGoBtn.addEventListener('click', () => {
+        homePage.classList.remove('active');
+        wishPage.classList.add('active');
+        setTimeout(() => wishInput.focus(), 100);
+      });
+      finalBackBtn.addEventListener('click', () => {
+        wishPage.classList.remove('active');
+        homePage.classList.add('active');
+      });
+
+      // 调整原有addWishBtn等监听已经存在，不需要重新获取。
+      // 但为了确保输入框回车和按钮工作正常，它们依然有效。
+      // 由于替换了goToWishBtn, 之前的addEventListener自然失效。完美。
+
+      // 另外，如果用户通过魔法棒跳转，showPage的旧函数可能有问题，调整magicWandBtn里的跳转方式：
+      // 修改magicWandBtn逻辑 (重新获取)
+      const newMagicBtn = magicWandBtn.cloneNode(true);
+      magicWandBtn.parentNode.replaceChild(newMagicBtn, magicWandBtn);
+      const finalMagicBtn = document.getElementById('magicWandBtn');
+      finalMagicBtn.addEventListener('click', () => {
+        const randomWish = magicWishes[Math.floor(Math.random() * magicWishes.length)];
+        addWish(randomWish);
+        // 切换到许愿墙
+        wishPage.classList.add('active');
+        homePage.classList.remove('active');
+        setTimeout(() => wishInput.focus(), 100);
+        finalMagicBtn.style.transform = 'scale(0.9) rotate(15deg)';
+        setTimeout(() => finalMagicBtn.style.transform = '', 200);
+      });
+
+      // 同样重新绑定撒彩带和音乐按钮的事件（可选，但不需要，因为还没被替换，保持原样）
+      // 不过为了不跟替换后的逻辑冲突，保留原样也没有问题。因为它们是独立的。
+
+      // 另外，当点击“写下你的祝福”后已经正确。但为了避免之前的旧监听影响，替换后完全OK。
+      // 确保许愿墙显示时样式正确
+    })();
+  </script>
+</body>
+</html>
